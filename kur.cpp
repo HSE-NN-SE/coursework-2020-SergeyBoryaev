@@ -32,12 +32,14 @@ public:
         short fission = 0;
         for (int i = (number.size() - 1); i >= 0; i--)
         {
-            number[i] = (((number[i] - '0') + (secondNumber[i] - '0')) % 10) + '0';
-            fission = (((number[i] - '0') + (secondNumber[i] - '0')) / 10) + '0';
+            int addNumbers = ((number[i] - '0') + (secondNumber[i] - '0'));
+            number[i] = (addNumbers % 10) + '0';
+            fission = (addNumbers / 10) + '0';
+            cout << fission << endl;
             if (i)
                 number[i - 1] += fission - '0';
         }
-        if (fission != '0')
+        if (fission > '0')
             number.insert(0, 1, '1');
     }
 };
