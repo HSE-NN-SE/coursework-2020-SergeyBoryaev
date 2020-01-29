@@ -7,7 +7,6 @@ class BigInt
 {
 private:
     string number;
-    long long numberLen = number.size();
 
 public:
     void EnterNumber(string enteredNumber)
@@ -18,10 +17,6 @@ public:
     {
         cout << "Your number is: " << number << endl;
     }
-    long long GetLen()
-    {
-        return numberLen;
-    }
     string GetNumber()
     {
         return number;
@@ -29,20 +24,20 @@ public:
     void AddNumber(BigInt c)
     {
         string secondNumber = c.GetNumber();
-        long long lenDifference = numberLen - c.GetLen();
+        long long lenDifference = number.size() - secondNumber.size();
         if (lenDifference > 0)
             secondNumber.insert(0, lenDifference, '0');
         else
             number.insert(0, lenDifference, '0');
         short fission = 0;
-        for (int i = numberLen; i >= 0; i--)
+        for (int i = (number.size() - 1); i >= 0; i--)
         {
-            number[i] = ((number[i] + secondNumber[i]) - '0' * 2) % 10;
-            fission = ((number[i] + secondNumber[i]) - '0' * 2) / 10;
+            number[i] = (((number[i] - '0') + (secondNumber[i] - '0')) % 10) + '0';
+            fission = (((number[i] - '0') + (secondNumber[i] - '0')) / 10) + '0';
             if (i)
-                number[i - 1] += fission;
+                number[i - 1] += fission - '0';
         }
-        if (fission)
+        if (fission != '0')
             number.insert(0, 1, '1');
     }
 };
