@@ -16,7 +16,7 @@ protected:
     BigInt UnsignAddNumber(BigInt b)
     {
         BigInt a;
-        a.AssignNumber(*this);
+        a = (*this);
         int remainder = 0;
         for (long i = 0; i < max(a.numbers.size(), b.numbers.size()); i++)
         {
@@ -35,7 +35,7 @@ protected:
     BigInt UnsignDeductionNumber(BigInt b)
     {
         BigInt a;
-        a.AssignNumber(*this);
+        a = (*this);
         int remainder = 0;
         for (long i = 0; i < b.numbers.size() || remainder; ++i)
         {
@@ -53,7 +53,7 @@ protected:
     {
         if (numbers.size() > b.numbers.size())
             return 1;
-        if (numbers.size() > b.numbers.size())
+        if (numbers.size() < b.numbers.size())
             return 0;
         int i = 0;
         for (; i < numbers.size(); i++)
@@ -65,16 +65,6 @@ protected:
     }
 
 public:
-    void AssignNumber(BigInt b)
-    {
-        numbers.clear();
-        for (int i = 0; i < b.numbers.size(); i++)
-        {
-            numbers.push_back(b.numbers[i]);
-        }
-        sign = b.sign;
-    }
-
     void MakeNumber()
     {
         cout << "Enter the number" << endl;
@@ -107,38 +97,94 @@ public:
         cout << endl;
     }
 
-    void AddNumber(BigInt b)
+    BigInt operator+(BigInt &b)
     {
+        BigInt temp;
         if (this->sign == b.sign)
         {
-            this->AssignNumber(this->UnsignAddNumber(b));
+            temp = (this->UnsignAddNumber(b));
         }
         else
         {
             if (this->UnsignCompare(b))
-                this->AssignNumber(this->UnsignDeductionNumber(b));
+                temp = (this->UnsignDeductionNumber(b));
             else
             {
-                sign = b.sign;
-                this->AssignNumber(b.UnsignDeductionNumber(*this));
+                temp = (b.UnsignDeductionNumber(*this));
+                temp.sign = b.sign;
             }
         }
+        return temp;
     }
 
-    void DeductionNumber(BigInt b)
+    BigInt operator-(BigInt &b)
     {
+        BigInt temp;
         if (this->sign != b.sign)
-            this->AssignNumber(this->AddNumber(b));
+            temp = (this->UnsignAddNumber(b));
         else
         {
             if (this->UnsignCompare(b))
-                this->AssignNumber(this->UnsignDeductionNumber(b));
+                temp = (this->UnsignDeductionNumber(b));
             else
             {
-                sign = b.sign;
-                this->AssignNumber(b.UnsignDeductionNumber(*this));
+                temp = (b.UnsignDeductionNumber(*this));
+                temp.sign = !(b.sign);
             }
         }
+        return temp;
+    }
+
+    BigInt operator*(BigInt &b)
+    {
+        BigInt temp;
+        temp.sign = 0;
+        if(this->sign != b.sign)
+            temp.sign = 1;
+        return temp;
+        
+    }
+
+    bool operator==(BigInt &b)
+    {
+        if(this->sign == b.sign && this->numbers == b.numbers)
+            return 1;
+        return 0;
+    }
+
+    bool operator!=(BigInt &b)
+    {
+        return !((*this)==b);
+    }
+
+    bool operator>=(BigInt &b)
+    {
+        if(this->sign == 0)
+        {
+            if(b.sign == 1)
+                return 1;
+            return this->UnsignCompare(b);
+        }
+        if(b.sign == 0)
+            return 0;
+        return !(this->UnsignCompare(b));
+    }
+
+    bool operator<=(BigInt &b)
+    {
+        return !((*this)>b);
+    }
+
+    bool operator>(BigInt &b)
+    {
+        if((*this)>=b && ((*this)!=b))
+            return 1;
+        return 0;
+    }
+
+    bool operator<(BigInt &b)
+    {
+        return !((*this)>=b);
     }
 };
 
@@ -147,10 +193,11 @@ int main()
     BigInt a;
     BigInt b;
     a.MakeNumber();
-    a.PrintNumber();
     b.MakeNumber();
-    b.PrintNumber();
-    a.AddNumber(b);
+    printf("%d\n", a==b);
+    BigInt c = a + b;
+    a = a - b;
     a.PrintNumber();
     b.PrintNumber();
+    c.PrintNumber();
 }
