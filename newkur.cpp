@@ -138,53 +138,67 @@ public:
     BigInt operator*(BigInt &b)
     {
         BigInt temp;
-        temp.sign = 0;
-        if(this->sign != b.sign)
+        if (this->sign == b.sign)
+            temp.sign = 0;
+        else
             temp.sign = 1;
+        temp.numbers.resize(this->numbers.size() + b.numbers.size());
+        for (int i = 0; i < this->numbers.size(); i++)
+            for (int j = 0, remainder = 0; j < (int)b.numbers.size() || remainder; ++j)
+            {
+                long long cur = temp.numbers[i + j] + this->numbers[i] * 1ll * (j < (int)b.numbers.size() ? b.numbers[j] : 0) + remainder;
+                temp.numbers[i + j] = int(cur % this->numberBase);
+                remainder = int(cur / this->numberBase);
+            }
+        while (temp.numbers.size() > 1 && temp.numbers.back() == 0)
+            temp.numbers.pop_back();
         return temp;
-        
+    }
+
+    BigInt operator/(BigInt &b)
+    {
     }
 
     bool operator==(BigInt &b)
     {
-        if(this->sign == b.sign && this->numbers == b.numbers)
+        if (this->sign == b.sign && this->numbers == b.numbers)
             return 1;
         return 0;
     }
 
     bool operator!=(BigInt &b)
     {
-        return !((*this)==b);
+        return !((*this) == b);
     }
 
     bool operator>=(BigInt &b)
     {
-        if(this->sign == 0)
+        if (this->sign == 0)
         {
-            if(b.sign == 1)
+            if (b.sign == 1)
                 return 1;
             return this->UnsignCompare(b);
         }
-        if(b.sign == 0)
+        if (b.sign == 0)
             return 0;
         return !(this->UnsignCompare(b));
     }
 
     bool operator<=(BigInt &b)
     {
-        return !((*this)>b);
+        return !((*this) > b);
     }
 
     bool operator>(BigInt &b)
     {
-        if((*this)>=b && ((*this)!=b))
+        if ((*this) >= b && ((*this) != b))
             return 1;
         return 0;
     }
 
     bool operator<(BigInt &b)
     {
-        return !((*this)>=b);
+        return !((*this) >= b);
     }
 };
 
@@ -194,10 +208,12 @@ int main()
     BigInt b;
     a.MakeNumber();
     b.MakeNumber();
-    printf("%d\n", a==b);
+    printf("%d\n", a == b);
     BigInt c = a + b;
     a = a - b;
     a.PrintNumber();
     b.PrintNumber();
     c.PrintNumber();
+    a = a * b;
+    a.PrintNumber();
 }
