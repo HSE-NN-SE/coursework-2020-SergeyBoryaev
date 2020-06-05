@@ -6,8 +6,7 @@ int main()
     BigInt a;
     BigInt b;
     std::cin >> a; 
-    BigInt c = a + b;
-    a = a - b;
+    std::cin >> b;
     a = a * b;
-    std::cout << b << "  " << a << "  " << c << std::endl;
+    std::cout << b << "  " << a << "  " << std::endl;
 }

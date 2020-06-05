@@ -6,8 +6,8 @@
 
 class BigInt
 {
-protected:
-    std::vector<int> numbers;
+private:
+    std::vector<unsigned> numbers;
     bool sign;
     static const int numberBase = 10000; // 10000*10000=100000000-max in int
     BigInt UnsignDeductionNumber(const BigInt &b) const;
@@ -18,7 +18,6 @@ public:
     // конструкторы
     BigInt();
     BigInt(const std::string str);
-    void MakeNumber();
     // операции
     BigInt operator+(const BigInt &b) const;
     BigInt operator-(const BigInt &b) const;

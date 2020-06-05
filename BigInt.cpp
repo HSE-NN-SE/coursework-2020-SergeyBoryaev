@@ -1,5 +1,7 @@
 #include "BigInt.h"
 
+std::vector<unsigned> karatsubaMul(const std::vector<unsigned>& x, const std::vector<unsigned>& y);
+
 BigInt BigInt::UnsignAddNumber(const BigInt &b) const
 {
     BigInt a;
@@ -76,15 +78,6 @@ BigInt::BigInt(const std::string str)
     }
 }
 
-void BigInt::MakeNumber()
-{
-    std::cout << "Enter the number" << std::endl;
-    std::string number;
-    std::cin >> number;
-    BigInt a(number);
-    *this = a;
-}
-
 //операции
 BigInt BigInt::operator+(const BigInt &b) const
 {
@@ -127,20 +120,9 @@ BigInt BigInt::operator-(const BigInt &b) const
 BigInt BigInt::operator*(const BigInt &b) const
 {
     BigInt temp;
-    if (this->sign == b.sign)
-        temp.sign = 0;
-    else
+    if(this->sign!=b.sign)
         temp.sign = 1;
-    temp.numbers.resize(this->numbers.size() + b.numbers.size());
-    for (int i = 0; i < this->numbers.size(); i++)
-        for (int j = 0, remainder = 0; j < (int)b.numbers.size() || remainder; ++j)
-        {
-            long long cur = temp.numbers[i + j] + this->numbers[i] * 1ll * (j < (int)b.numbers.size() ? b.numbers[j] : 0) + remainder;
-            temp.numbers[i + j] = (int)(cur % this->numberBase);
-            remainder = (int)(cur / this->numberBase);
-        }
-    while (temp.numbers.size() > 1 && temp.numbers.back() == 0)
-        temp.numbers.pop_back();
+    temp.numbers = karatsubaMul(this->numbers, b.numbers);
     return temp;
 }
 
@@ -220,3 +202,64 @@ std::istream &operator>>(std::istream &stream, BigInt &b)
     b = BigInt(str);
     return stream;
 }
+
+// Алгоритм умножения
+std::vector<unsigned> naive_mul(const std::vector<unsigned>& x, const std::vector<unsigned>& y) {
+        auto len = x.size();
+        std::vector<unsigned> res(2 * len);
+        
+        for (auto i = 0; i < len; ++i) {
+            for (auto j = 0; j < len; ++j) {
+                res[i + j] += x[i] * y[j];
+            }
+        }
+        
+        return res;
+    }
+
+std::vector<unsigned> karatsubaMul(const std::vector<unsigned>& x, const std::vector<unsigned>& y) {
+        auto len = x.size();    
+        std::vector<unsigned> res(2 * len);
+        
+        auto k = len / 2;
+        
+        if (len <= 4) {
+            return naive_mul(x, y);
+        }
+
+        std::vector<unsigned> Xr {x.begin(), x.begin() + k};
+        std::vector<unsigned> Xl {x.begin() + k, x.end()};
+        std::vector<unsigned> Yr {y.begin(), y.begin() + k};
+        std::vector<unsigned> Yl {y.begin() + k, y.end()};
+        
+        std::vector<unsigned> P1 = karatsubaMul(Xl, Yl);
+        std::vector<unsigned> P2 = karatsubaMul(Xr, Yr);    
+            
+        std::vector<unsigned> Xlr(k);
+        std::vector<unsigned> Ylr(k);
+        
+        for (auto i = 0; i < k; ++i) {
+            Xlr[i] = Xl[i] + Xr[i];
+            Ylr[i] = Yl[i] + Yr[i];
+        }
+        
+        std::vector<unsigned> P3 = karatsubaMul(Xlr, Ylr);
+        
+        for (auto i = 0; i < len; ++i) {
+            P3[i] -= P2[i] + P1[i];
+        }
+        
+        for (auto i = 0; i < len; ++i) {
+            res[i] = P2[i];
+        }
+
+        for (auto i = len; i < 2 * len; ++i) {
+            res[i] = P1[i - len];
+        }
+
+        for (auto i = k; i < len + k; ++i) {
+            res[i] += P3[i - k];
+        }
+        
+        return res;
+    }
