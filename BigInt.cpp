@@ -1,6 +1,7 @@
 #include "BigInt.h"
 
-std::vector<unsigned> karatsubaMul(const std::vector<unsigned>& x, const std::vector<unsigned>& y);
+std::vector<unsigned> karacubaMult(const std::vector<unsigned> &a, const std::vector<unsigned> &b);
+std::vector<unsigned> mult(const std::vector<unsigned> &a, const std::vector<unsigned> &b);
 
 BigInt BigInt::UnsignAddNumber(const BigInt &b) const
 {
@@ -120,14 +121,17 @@ BigInt BigInt::operator-(const BigInt &b) const
 BigInt BigInt::operator*(const BigInt &b) const
 {
     BigInt temp;
-    if(this->sign!=b.sign)
+    if (this->sign != b.sign)
         temp.sign = 1;
-    temp.numbers = karatsubaMul(this->numbers, b.numbers);
+    temp.numbers = karacubaMult(this->numbers, b.numbers);
     return temp;
 }
 
 BigInt BigInt::operator/(const BigInt &b) const
 {
+    BigInt temp;
+    if (this->sign != b.sign)
+        temp.sign = 1;
 }
 
 BigInt BigInt::operator-() const
@@ -143,7 +147,6 @@ BigInt BigInt::abs() const
     temp.sign = 0;
     return temp;
 }
-
 //булевые операции
 bool BigInt::operator==(const BigInt &b) const
 {
@@ -203,63 +206,68 @@ std::istream &operator>>(std::istream &stream, BigInt &b)
     return stream;
 }
 
-// Алгоритм умножения
-std::vector<unsigned> naive_mul(const std::vector<unsigned>& x, const std::vector<unsigned>& y) {
-        auto len = x.size();
-        std::vector<unsigned> res(2 * len);
-        
-        for (auto i = 0; i < len; ++i) {
-            for (auto j = 0; j < len; ++j) {
-                res[i + j] += x[i] * y[j];
-            }
+std::vector<unsigned> mult(const std::vector<unsigned> &a, const std::vector<unsigned> &b)
+{
+    int remainder = 0;
+    std::vector<unsigned> c(a.size() + b.size());
+    for (int i = 0; i < a.size(); ++i)
+        for (int j = 0; j < (int)b.size() || remainder; ++j)
+        {
+            long long cur = c[i + j] + a[i] * 1ll * (j < (int)b.size() ? b[j] : 0) + remainder;
+            c[i + j] = int(cur % 10000);
+            remainder = int(cur / 10000);
         }
-        
-        return res;
+    while (c.size() > 1 && c.back() == 0)
+        c.pop_back();
+    return c;
+}
+
+std::vector<unsigned> karacubaMult(const std::vector<unsigned> &a, const std::vector<unsigned> &b)
+{
+    int len = std::max(a.size(), b.size());
+    std::vector<unsigned> aNew = a;
+    std::vector<unsigned> bNew = b;
+    int k = len / 2;
+    len = k*2;
+    aNew.resize(len);
+    bNew.resize(len);
+    if (len <= 4)
+        return mult(a, b);
+    std::vector<unsigned> c(len * 2);
+
+    std::vector<unsigned> aH{aNew.begin(), aNew.begin() + k};
+    std::vector<unsigned> aL{aNew.begin() + k, aNew.end()};
+    std::vector<unsigned> bH{bNew.begin(), bNew.begin() + k};
+    std::vector<unsigned> bL{bNew.begin() + k, bNew.end()};
+
+    std::vector<unsigned> P1 = karacubaMult(aL, bL);
+    std::vector<unsigned> P2 = karacubaMult(aH, bH);
+
+    std::vector<unsigned> aHL(k);
+    std::vector<unsigned> bHL(k);
+    for(int i=0;i<k;i++)
+    {
+        aHL[i] = aH[i] + aL[i];
+        bHL[i] = bH[i] + bL[i];
     }
 
-std::vector<unsigned> karatsubaMul(const std::vector<unsigned>& x, const std::vector<unsigned>& y) {
-        auto len = x.size();    
-        std::vector<unsigned> res(2 * len);
-        
-        auto k = len / 2;
-        
-        if (len <= 4) {
-            return naive_mul(x, y);
-        }
+    std::vector<unsigned> P3 = karacubaMult(aHL, bHL);
 
-        std::vector<unsigned> Xr {x.begin(), x.begin() + k};
-        std::vector<unsigned> Xl {x.begin() + k, x.end()};
-        std::vector<unsigned> Yr {y.begin(), y.begin() + k};
-        std::vector<unsigned> Yl {y.begin() + k, y.end()};
-        
-        std::vector<unsigned> P1 = karatsubaMul(Xl, Yl);
-        std::vector<unsigned> P2 = karatsubaMul(Xr, Yr);    
-            
-        std::vector<unsigned> Xlr(k);
-        std::vector<unsigned> Ylr(k);
-        
-        for (auto i = 0; i < k; ++i) {
-            Xlr[i] = Xl[i] + Xr[i];
-            Ylr[i] = Yl[i] + Yr[i];
-        }
-        
-        std::vector<unsigned> P3 = karatsubaMul(Xlr, Ylr);
-        
-        for (auto i = 0; i < len; ++i) {
-            P3[i] -= P2[i] + P1[i];
-        }
-        
-        for (auto i = 0; i < len; ++i) {
-            res[i] = P2[i];
-        }
-
-        for (auto i = len; i < 2 * len; ++i) {
-            res[i] = P1[i - len];
-        }
-
-        for (auto i = k; i < len + k; ++i) {
-            res[i] += P3[i - k];
-        }
-        
-        return res;
+    for (int i = 0; i < len; ++i) {
+        P3[i] -= P2[i] + P1[i];
     }
+    
+    for (int i = 0; i < len; ++i) {
+        c[i] = P2[i];
+    }
+
+    for (int i = len; i < 2 * len; ++i) {
+        c[i] = P1[i - len];
+    }
+
+    for (int i = k; i < len + k; ++i) {
+        c[i] += P3[i - k];
+    }
+    
+    return c;
+}
