@@ -3,10 +3,25 @@
 
 int main()
 {
-    BigInt a;
     BigInt b;
-    std::cin >> a; 
+    std::string str;
+    std::cin >> str;
+    std:: cout << str;
+    BigInt a(str);
+    std::cout << "B: ";
     std::cin >> b;
-    a = a / b;
-    std::cout << b << "  " << a << "  " << std::endl;
+    std::cout << "A: " << a << std::endl;
+    std::cout << "B: " << b << std::endl;
+    std::cout << "A+B: " << a+b << std::endl;
+    std::cout << "A: " << a << std::endl;
+    std::cout << "B: " << b << std::endl;
+    std::cout << "A-B: " << a - b << std::endl;
+    std::cout << "A: " << a << std::endl;
+    std::cout << "B: " << b << std::endl;
+    std::cout << "A*B: " << a * b << std::endl;
+    std::cout << "A: " << a << std::endl;
+    std::cout << "B: " << b << std::endl;
+    std::cout << "A/B: " << a / b << std::endl;
+    std::cout << "A: " << a << std::endl;
+    std::cout << "B: " << b << std::endl;
 }

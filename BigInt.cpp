@@ -86,11 +86,15 @@ BigInt BigInt::operator+(const BigInt &b) const
     if (this->sign == b.sign)
     {
         temp = (this->UnsignAddNumber(b));
+        temp.sign = this->sign;
     }
     else
     {
-        if ((*this) >= b)
+        if (this->UnsignCompare(b))
+        {
             temp = (this->UnsignDeductionNumber(b));
+            temp.sign = this->sign;
+        }
         else
         {
             temp = (b.UnsignDeductionNumber(*this));
@@ -104,11 +108,17 @@ BigInt BigInt::operator-(const BigInt &b) const
 {
     BigInt temp;
     if (this->sign != b.sign)
+    {
         temp = (this->UnsignAddNumber(b));
+        temp.sign = this->sign;
+    }
     else
     {
         if (this->UnsignCompare(b))
+        {
             temp = (this->UnsignDeductionNumber(b));
+            temp.sign = this->sign;
+        }
         else
         {
             temp = (b.UnsignDeductionNumber(*this));
@@ -133,13 +143,13 @@ BigInt BigInt::operator/(const BigInt &b) const
     one.numbers[0] = 1;
     std::string tmpStr;
     BigInt aNew = *this;
-    if (this->sign != b.sign)
-        temp.sign = 1;
-    while (this->UnsignCompare(b))
+    while (aNew.UnsignCompare(b))
     {
         aNew = aNew.UnsignDeductionNumber(b);
         temp = temp + one;
     }
+    if (this->sign != b.sign)
+        temp.sign = 1;
     return temp;
 }
 
