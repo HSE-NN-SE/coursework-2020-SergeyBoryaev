@@ -140,6 +140,8 @@ BigInt BigInt::operator*(const BigInt &b) const
 BigInt BigInt::operator/(const BigInt &b) const
 {
     BigInt temp, one;
+    if(b == temp)
+        throw 1;
     one.numbers[0] = 1;
     std::string tmpStr;
     BigInt aNew = *this;

@@ -4,24 +4,33 @@
 int main()
 {
     BigInt b;
-    std::string str;
-    std::cin >> str;
-    std:: cout << str;
-    BigInt a(str);
+    BigInt a;
+    std::cout << "A: ";
+    std::cin >> a;
     std::cout << "B: ";
     std::cin >> b;
-    std::cout << "A: " << a << std::endl;
-    std::cout << "B: " << b << std::endl;
-    std::cout << "A+B: " << a+b << std::endl;
-    std::cout << "A: " << a << std::endl;
-    std::cout << "B: " << b << std::endl;
+    std::cout << "Number A: " << a << std::endl;
+    std::cout << "Number B: " << b << std::endl;
+    std::cout << "A+B: " << a + b << std::endl;
     std::cout << "A-B: " << a - b << std::endl;
-    std::cout << "A: " << a << std::endl;
-    std::cout << "B: " << b << std::endl;
     std::cout << "A*B: " << a * b << std::endl;
-    std::cout << "A: " << a << std::endl;
-    std::cout << "B: " << b << std::endl;
-    std::cout << "A/B: " << a / b << std::endl;
-    std::cout << "A: " << a << std::endl;
-    std::cout << "B: " << b << std::endl;
+    try
+    {
+        std::cout << "A / B: " << a / b << std::endl;
+    }
+    catch (int error)
+    {
+        if (error == 1)
+            std::cout << "0 devision error" << std::endl;
+    }
+    std::cout << "A==B? ";
+    if (a == b)
+        std::cout << "True" << std::endl;
+    else
+        std::cout << "False" << std::endl;
+    std::cout << "A>B? ";
+    if (a > b)
+        std::cout << "True" << std::endl;
+    else
+        std::cout << "False" << std::endl;
 }
