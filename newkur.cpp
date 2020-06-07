@@ -7,6 +7,6 @@ int main()
     BigInt b;
     std::cin >> a; 
     std::cin >> b;
-    a = a * b;
+    a = a / b;
     std::cout << b << "  " << a << "  " << std::endl;
 }

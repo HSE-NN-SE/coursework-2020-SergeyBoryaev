@@ -129,9 +129,18 @@ BigInt BigInt::operator*(const BigInt &b) const
 
 BigInt BigInt::operator/(const BigInt &b) const
 {
-    BigInt temp;
+    BigInt temp, one;
+    one.numbers[0] = 1;
+    std::string tmpStr;
+    BigInt aNew = *this;
     if (this->sign != b.sign)
         temp.sign = 1;
+    while (this->UnsignCompare(b))
+    {
+        aNew = aNew.UnsignDeductionNumber(b);
+        temp = temp + one;
+    }
+    return temp;
 }
 
 BigInt BigInt::operator-() const
@@ -228,46 +237,41 @@ std::vector<unsigned> karacubaMult(const std::vector<unsigned> &a, const std::ve
     std::vector<unsigned> aNew = a;
     std::vector<unsigned> bNew = b;
     int k = len / 2;
-    len = k*2;
+    len = k * 2;
     aNew.resize(len);
     bNew.resize(len);
     if (len <= 4)
         return mult(a, b);
     std::vector<unsigned> c(len * 2);
-
     std::vector<unsigned> aH{aNew.begin(), aNew.begin() + k};
     std::vector<unsigned> aL{aNew.begin() + k, aNew.end()};
     std::vector<unsigned> bH{bNew.begin(), bNew.begin() + k};
     std::vector<unsigned> bL{bNew.begin() + k, bNew.end()};
-
     std::vector<unsigned> P1 = karacubaMult(aL, bL);
     std::vector<unsigned> P2 = karacubaMult(aH, bH);
-
     std::vector<unsigned> aHL(k);
     std::vector<unsigned> bHL(k);
-    for(int i=0;i<k;i++)
+    for (int i = 0; i < k; i++)
     {
         aHL[i] = aH[i] + aL[i];
         bHL[i] = bH[i] + bL[i];
     }
-
     std::vector<unsigned> P3 = karacubaMult(aHL, bHL);
-
-    for (int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i)
+    {
         P3[i] -= P2[i] + P1[i];
     }
-    
-    for (int i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i)
+    {
         c[i] = P2[i];
     }
-
-    for (int i = len; i < 2 * len; ++i) {
+    for (int i = len; i < 2 * len; ++i)
+    {
         c[i] = P1[i - len];
     }
-
-    for (int i = k; i < len + k; ++i) {
+    for (int i = k; i < len + k; ++i)
+    {
         c[i] += P3[i - k];
     }
-    
     return c;
 }
