@@ -1,9 +1,9 @@
 #include "BigInt.h"
 
-std::vector<unsigned> karacubaMult(const std::vector<unsigned> &a, const std::vector<unsigned> &b);
-std::vector<unsigned> mult(const std::vector<unsigned> &a, const std::vector<unsigned> &b);
+std::vector<unsigned> karacubaMult(const std::vector<unsigned>& a, const std::vector<unsigned>& b);
+std::vector<unsigned> mult(const std::vector<unsigned>& a, const std::vector<unsigned>& b);
 
-BigInt BigInt::UnsignAddNumber(const BigInt &b) const
+BigInt BigInt::UnsignAddNumber(const BigInt& b) const
 {
     BigInt a;
     a = (*this);
@@ -22,7 +22,7 @@ BigInt BigInt::UnsignAddNumber(const BigInt &b) const
     return a;
 }
 
-BigInt BigInt::UnsignDeductionNumber(const BigInt &b) const
+BigInt BigInt::UnsignDeductionNumber(const BigInt& b) const
 {
     BigInt a;
     a = (*this);
@@ -39,7 +39,7 @@ BigInt BigInt::UnsignDeductionNumber(const BigInt &b) const
     return a;
 }
 
-bool BigInt::UnsignCompare(const BigInt &b) const
+bool BigInt::UnsignCompare(const BigInt& b) const
 {
     if (numbers.size() > b.numbers.size())
         return 1;
@@ -49,12 +49,14 @@ bool BigInt::UnsignCompare(const BigInt &b) const
     for (; i < numbers.size(); i++)
         if (numbers[i] != b.numbers[i])
             break;
+    if (i == numbers.size())
+        return 1;
     if (numbers[i] >= b.numbers[i])
         return 1;
     return 0;
 }
 
-//РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂС‹
+//конструкторы
 BigInt::BigInt()
 {
     this->numbers.push_back(0);
@@ -64,7 +66,7 @@ BigInt::BigInt()
 BigInt::BigInt(const std::string str)
 {
     std::string number = str;
-    BigInt a;
+    this->sign = 0;
     if (number[0] == '-')
     {
         this->sign = 1;
@@ -79,8 +81,8 @@ BigInt::BigInt(const std::string str)
     }
 }
 
-//РѕРїРµСЂР°С†РёРё
-BigInt BigInt::operator+(const BigInt &b) const
+//операции
+BigInt BigInt::operator+(const BigInt& b) const
 {
     BigInt temp;
     if (this->sign == b.sign)
@@ -104,7 +106,7 @@ BigInt BigInt::operator+(const BigInt &b) const
     return temp;
 }
 
-BigInt BigInt::operator-(const BigInt &b) const
+BigInt BigInt::operator-(const BigInt& b) const
 {
     BigInt temp;
     if (this->sign != b.sign)
@@ -128,7 +130,7 @@ BigInt BigInt::operator-(const BigInt &b) const
     return temp;
 }
 
-BigInt BigInt::operator*(const BigInt &b) const
+BigInt BigInt::operator*(const BigInt& b) const
 {
     BigInt temp;
     if (this->sign != b.sign)
@@ -137,11 +139,11 @@ BigInt BigInt::operator*(const BigInt &b) const
     return temp;
 }
 
-BigInt BigInt::operator/(const BigInt &b) const
+BigInt BigInt::operator/(const BigInt& b) const
 {
     BigInt temp, one;
-    if(b == temp)
-        throw 1;
+        if (b == temp)
+            throw 1;
     one.numbers[0] = 1;
     std::string tmpStr;
     BigInt aNew = *this;
@@ -168,20 +170,20 @@ BigInt BigInt::abs() const
     temp.sign = 0;
     return temp;
 }
-//Р±СѓР»РµРІС‹Рµ РѕРїРµСЂР°С†РёРё
-bool BigInt::operator==(const BigInt &b) const
+//булевые операции
+bool BigInt::operator==(const BigInt& b) const
 {
     if (this->sign == b.sign && this->numbers == b.numbers)
         return 1;
     return 0;
 }
 
-bool BigInt::operator!=(const BigInt &b) const
+bool BigInt::operator!=(const BigInt& b) const
 {
     return !((*this) == b);
 }
 
-bool BigInt::operator>=(const BigInt &b) const
+bool BigInt::operator>=(const BigInt& b) const
 {
     if (this->sign == 0)
     {
@@ -194,32 +196,33 @@ bool BigInt::operator>=(const BigInt &b) const
     return !(this->UnsignCompare(b));
 }
 
-bool BigInt::operator<=(const BigInt &b) const
+bool BigInt::operator<=(const BigInt& b) const
 {
     return !((*this) > b);
 }
-bool BigInt::operator>(const BigInt &b) const
+bool BigInt::operator>(const BigInt& b) const
 {
     if ((*this) >= b && ((*this) != b))
         return 1;
     return 0;
 }
 
-bool BigInt::operator<(const BigInt &b) const
+bool BigInt::operator<(const BigInt& b) const
 {
     return !((*this) >= b);
 }
 
 //in/out
-std::ostream &operator<<(std::ostream &stream, const BigInt &b)
+std::ostream& operator<<(std::ostream& stream, const BigInt& b)
 {
     if (b.sign == 1)
         stream << '-';
     for (int i = (int)b.numbers.size() - 1; i >= 0; i--)
         stream << b.numbers[i];
+    return stream;
 }
 
-std::istream &operator>>(std::istream &stream, BigInt &b)
+std::istream& operator>>(std::istream& stream, BigInt& b)
 {
     std::string str;
     stream >> str;
@@ -227,7 +230,7 @@ std::istream &operator>>(std::istream &stream, BigInt &b)
     return stream;
 }
 
-std::vector<unsigned> mult(const std::vector<unsigned> &a, const std::vector<unsigned> &b)
+std::vector<unsigned> mult(const std::vector<unsigned>& a, const std::vector<unsigned>& b)
 {
     int remainder = 0;
     std::vector<unsigned> c(a.size() + b.size());
@@ -243,7 +246,7 @@ std::vector<unsigned> mult(const std::vector<unsigned> &a, const std::vector<uns
     return c;
 }
 
-std::vector<unsigned> karacubaMult(const std::vector<unsigned> &a, const std::vector<unsigned> &b)
+std::vector<unsigned> karacubaMult(const std::vector<unsigned>& a, const std::vector<unsigned>& b)
 {
     int len = std::max(a.size(), b.size());
     std::vector<unsigned> aNew = a;
@@ -255,10 +258,10 @@ std::vector<unsigned> karacubaMult(const std::vector<unsigned> &a, const std::ve
     if (len <= 4)
         return mult(a, b);
     std::vector<unsigned> c(len * 2);
-    std::vector<unsigned> aH{aNew.begin(), aNew.begin() + k};
-    std::vector<unsigned> aL{aNew.begin() + k, aNew.end()};
-    std::vector<unsigned> bH{bNew.begin(), bNew.begin() + k};
-    std::vector<unsigned> bL{bNew.begin() + k, bNew.end()};
+    std::vector<unsigned> aH{ aNew.begin(), aNew.begin() + k };
+    std::vector<unsigned> aL{ aNew.begin() + k, aNew.end() };
+    std::vector<unsigned> bH{ bNew.begin(), bNew.begin() + k };
+    std::vector<unsigned> bL{ bNew.begin() + k, bNew.end() };
     std::vector<unsigned> P1 = karacubaMult(aL, bL);
     std::vector<unsigned> P2 = karacubaMult(aH, bH);
     std::vector<unsigned> aHL(k);
