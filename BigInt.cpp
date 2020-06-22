@@ -255,7 +255,7 @@ std::vector<unsigned> karacubaMult(const std::vector<unsigned>& a, const std::ve
     len = k * 2;
     aNew.resize(len);
     bNew.resize(len);
-    if (len <= 4)
+    if (len <= 16)
         return mult(a, b);
     std::vector<unsigned> c(len * 2);
     std::vector<unsigned> aH{ aNew.begin(), aNew.begin() + k };
